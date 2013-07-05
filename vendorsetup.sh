@@ -1,0 +1,11 @@
+
+add_lunch_combo poly_d2att-userdebug
+add_lunch_combo poly_find5-userdebug
+add_lunch_combo poly_infuse4g-userdebug
+add_lunch_combo poly_jfltetmo-userdebug
+add_lunch_combo poly_m7ul-userdebug
+add_lunch_combo poly_m7att-userdebug
+add_lunch_combo poly_mako-userdebug
+add_lunch_combo poly_n7100-userdebug
+add_lunch_combo poly_quincyatt-userdebug
+add_lunch_combo poly_t0lteatt-userdebug
