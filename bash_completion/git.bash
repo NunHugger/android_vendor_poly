@@ -601,17 +601,17 @@ __git_complete_revlist ()
 
 __git_complete_remote_or_refspec ()
 {
-	local cur_="$cur" polyd="${words[1]}"
+	local cur_="$cur" cmd="${words[1]}"
 	local i c=2 remote="" pfx="" lhs=1 no_complete_refspec=0
-	if [ "$polyd" = "remote" ]; then
+	if [ "$cmd" = "remote" ]; then
 		((c++))
 	fi
 	while [ $c -lt $cword ]; do
 		i="${words[c]}"
 		case "$i" in
-		--mirror) [ "$polyd" = "push" ] && no_complete_refspec=1 ;;
+		--mirror) [ "$cmd" = "push" ] && no_complete_refspec=1 ;;
 		--all)
-			case "$polyd" in
+			case "$cmd" in
 			push) no_complete_refspec=1 ;;
 			fetch)
 				COMPREPLY=()
@@ -648,7 +648,7 @@ __git_complete_remote_or_refspec ()
 		cur_="${cur_#+}"
 		;;
 	esac
-	case "$polyd" in
+	case "$cmd" in
 	fetch)
 		if [ $lhs = 1 ]; then
 			__gitcomp_nl "$(__git_refs2 "$remote")" "$pfx" "$cur_"
@@ -844,9 +844,9 @@ __git_aliases ()
 # __git_aliased_command requires 1 argument
 __git_aliased_command ()
 {
-	local word polydline=$(git --git-dir="$(__gitdir)" \
+	local word cmdline=$(git --git-dir="$(__gitdir)" \
 		config --get "alias.$1")
-	for word in $polydline; do
+	for word in $cmdline; do
 		case "$word" in
 		\!gitk|gitk)
 			echo "gitk"
@@ -863,8 +863,8 @@ __git_aliased_command ()
 	done
 }
 
-# __git_find_on_polydline requires 1 argument
-__git_find_on_polydline ()
+# __git_find_on_cmdline requires 1 argument
+__git_find_on_cmdline ()
 {
 	local word subcommand c=1
 	while [ $c -lt $cword ]; do
@@ -1016,7 +1016,7 @@ _git_bisect ()
 	__git_has_doubledash && return
 
 	local subcommands="start bad good skip reset visualize replay log run"
-	local subcommand="$(__git_find_on_polydline "$subcommands")"
+	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		if [ -f "$(__gitdir)"/BISECT_START ]; then
 			__gitcomp "$subcommands"
@@ -1073,7 +1073,7 @@ _git_branch ()
 
 _git_bundle ()
 {
-	local polyd="${words[2]}"
+	local cmd="${words[2]}"
 	case "$cword" in
 	2)
 		__gitcomp "create list-heads verify unbundle"
@@ -1082,7 +1082,7 @@ _git_bundle ()
 		# looking for a file
 		;;
 	*)
-		case "$polyd" in
+		case "$cmd" in
 			create)
 				__git_complete_revlist
 			;;
@@ -1109,7 +1109,7 @@ _git_checkout ()
 		# check if --track, --no-track, or --no-guess was specified
 		# if so, disable DWIM mode
 		local flags="--track --no-track --no-guess" track=1
-		if [ -n "$(__git_find_on_polydline "$flags")" ]; then
+		if [ -n "$(__git_find_on_cmdline "$flags")" ]; then
 			track=''
 		fi
 		__gitcomp_nl "$(__git_refs '' $track)"
@@ -1277,7 +1277,7 @@ _git_diff ()
 	__git_complete_revlist_file
 }
 
-__git_mergetools_common="diffuse epolyerge emerge kdiff3 meld opendiff
+__git_mergetools_common="diffuse ecmerge emerge kdiff3 meld opendiff
 			tkdiff vimdiff gvimdiff xxdiff araxis p4merge bc3 codecompare
 "
 
@@ -1612,7 +1612,7 @@ _git_name_rev ()
 _git_notes ()
 {
 	local subcommands='add append copy edit list prune remove show'
-	local subcommand="$(__git_find_on_polydline "$subcommands")"
+	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 
 	case "$subcommand,$cur" in
 	,--*)
@@ -1726,7 +1726,7 @@ _git_rebase ()
 _git_reflog ()
 {
 	local subcommands="show delete expire"
-	local subcommand="$(__git_find_on_polydline "$subcommands")"
+	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 
 	if [ -z "$subcommand" ]; then
 		__gitcomp "$subcommands"
@@ -1736,7 +1736,7 @@ _git_reflog ()
 }
 
 __git_send_email_confirm_options="always never auto cc compose"
-__git_send_email_suppresscc_options="author self cc bodycc sob ccpolyd body all"
+__git_send_email_suppresscc_options="author self cc bodycc sob cccmd body all"
 
 _git_send_email ()
 {
@@ -1765,7 +1765,7 @@ _git_send_email ()
 		return
 		;;
 	--*)
-		__gitcomp "--annotate --bcc --cc --cc-polyd --chain-reply-to
+		__gitcomp "--annotate --bcc --cc --cc-cmd --chain-reply-to
 			--compose --confirm= --dry-run --envelope-sender
 			--from --identity
 			--in-reply-to --no-chain-reply-to --no-signed-off-by-cc
@@ -1919,24 +1919,24 @@ _git_config ()
 	guitool.*.*)
 		local pfx="${cur%.*}." cur_="${cur##*.}"
 		__gitcomp "
-			argprompt polyd confirm needsfile noconsole norescan
+			argprompt cmd confirm needsfile noconsole norescan
 			prompt revprompt revunmerged title
 			" "$pfx" "$cur_"
 		return
 		;;
 	difftool.*.*)
 		local pfx="${cur%.*}." cur_="${cur##*.}"
-		__gitcomp "polyd path" "$pfx" "$cur_"
+		__gitcomp "cmd path" "$pfx" "$cur_"
 		return
 		;;
 	man.*.*)
 		local pfx="${cur%.*}." cur_="${cur##*.}"
-		__gitcomp "polyd path" "$pfx" "$cur_"
+		__gitcomp "cmd path" "$pfx" "$cur_"
 		return
 		;;
 	mergetool.*.*)
 		local pfx="${cur%.*}." cur_="${cur##*.}"
-		__gitcomp "polyd path trustExitCode" "$pfx" "$cur_"
+		__gitcomp "cmd path trustExitCode" "$pfx" "$cur_"
 		return
 		;;
 	pager.*)
@@ -2211,7 +2211,7 @@ _git_config ()
 		sendemail.aliasfiletype
 		sendemail.bcc
 		sendemail.cc
-		sendemail.ccpolyd
+		sendemail.cccmd
 		sendemail.chainreplyto
 		sendemail.confirm
 		sendemail.envelopesender
@@ -2250,7 +2250,7 @@ _git_config ()
 _git_remote ()
 {
 	local subcommands="add rename remove set-head set-branches set-url show prune update"
-	local subcommand="$(__git_find_on_polydline "$subcommands")"
+	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		__gitcomp "$subcommands"
 		return
@@ -2379,14 +2379,14 @@ _git_stash ()
 {
 	local save_opts='--keep-index --no-keep-index --quiet --patch'
 	local subcommands='save list show apply clear drop pop create branch'
-	local subcommand="$(__git_find_on_polydline "$subcommands")"
+	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		case "$cur" in
 		--*)
 			__gitcomp "$save_opts"
 			;;
 		*)
-			if [ -z "$(__git_find_on_polydline "$save_opts")" ]; then
+			if [ -z "$(__git_find_on_cmdline "$save_opts")" ]; then
 				__gitcomp "$subcommands"
 			else
 				COMPREPLY=()
@@ -2420,7 +2420,7 @@ _git_submodule ()
 	__git_has_doubledash && return
 
 	local subcommands="add status init update summary foreach sync"
-	if [ -z "$(__git_find_on_polydline "$subcommands")" ]; then
+	if [ -z "$(__git_find_on_cmdline "$subcommands")" ]; then
 		case "$cur" in
 		--*)
 			__gitcomp "--quiet --cached"
@@ -2441,7 +2441,7 @@ _git_svn ()
 		proplist show-ignore show-externals branch tag blame
 		migrate mkdirs reset gc
 		"
-	local subcommand="$(__git_find_on_polydline "$subcommands")"
+	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		__gitcomp "$subcommands"
 	else
@@ -2460,7 +2460,7 @@ _git_svn ()
 			--rewrite-root= --prefix= --use-log-author
 			--add-author-from $remote_opts
 			"
-		local polyt_opts="
+		local cmt_opts="
 			--edit --rmdir --find-copies-harder --copy-similarity=
 			"
 
@@ -2478,11 +2478,11 @@ _git_svn ()
 			__gitcomp "
 				--merge --strategy= --verbose --dry-run
 				--fetch-all --no-rebase --commit-url
-				--revision --interactive $polyt_opts $fc_opts
+				--revision --interactive $cmt_opts $fc_opts
 				"
 			;;
 		set-tree,--*)
-			__gitcomp "--stdin $polyt_opts $fc_opts"
+			__gitcomp "--stdin $cmt_opts $fc_opts"
 			;;
 		create-ignore,--*|propget,--*|proplist,--*|show-ignore,--*|\
 		show-externals,--*|mkdirs,--*)
@@ -2502,7 +2502,7 @@ _git_svn ()
 				"
 			;;
 		commit-diff,--*)
-			__gitcomp "--message= --file= --revision= $polyt_opts"
+			__gitcomp "--message= --file= --revision= $cmt_opts"
 			;;
 		info,--*)
 			__gitcomp "--url"

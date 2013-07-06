@@ -7,12 +7,12 @@
 : ${TERM:=vt100} ${HOME:=/data} ${MKSH:=/system/bin/sh} ${HOSTNAME:=android}
 : ${SHELL:=$MKSH} ${USER:=$(typeset x=$(id); x=${x#*\(}; print -r -- ${x%%\)*})}
 if (( USER_ID )); then PS1='$'; else PS1='#'; fi
-function prepolyd {
+function precmd {
 	typeset e=$?
 
 	(( e )) && print -n "$e|"
 }
-PS1='$(prepolyd)$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
+PS1='$(precmd)$USER@$HOSTNAME:${PWD:-?} '"$PS1 "
 export HOME HOSTNAME MKSH SHELL TERM USER
 alias l='ls'
 alias la='l -a'

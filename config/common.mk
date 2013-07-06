@@ -70,7 +70,7 @@ endif
 PRODUCT_COPY_FILES += \
     vendor/poly/prebuilt/common/bin/backuptool.sh:system/bin/backuptool.sh \
     vendor/poly/prebuilt/common/bin/backuptool.functions:system/bin/backuptool.functions \
-    vendor/poly/prebuilt/common/bin/50-poly.sh:system/addon.d/50-poly.sh \
+    vendor/poly/prebuilt/common/bin/50-cm.sh:system/addon.d/50-cmsh \
     vendor/poly/prebuilt/common/bin/blacklist:system/addon.d/blacklist
 
 # init.d support
@@ -84,7 +84,7 @@ PRODUCT_COPY_FILES += \
 
 # CM-specific init file
 PRODUCT_COPY_FILES += \
-    vendor/poly/prebuilt/common/etc/init.local.rc:root/init.poly.rc
+    vendor/poly/prebuilt/common/etc/init.local.rc:root/init.cm.rc
 
 # Compcache/Zram support
 PRODUCT_COPY_FILES += \
@@ -202,16 +202,16 @@ endif
 #Set Unofficial if no buildtype set (Buildtype should ONLY be set by Poly Devs!)
 ifdef POLY_BUILDTYPE
 else
-    POLY_BUILDTYPE := UNOFFICIAL
+    POLY_BUILDTYPE := ALPHA
     POLY_VERSION_MAJOR :=
     POLY_VERSION_MINOR :=
 endif
 
 #Set Poly version
 ifdef POLY_RELEASE
-    POLY_VERSION := "POLYCULER-v"$(POLY_VERSION_MAJOR).$(POLY_VERSION_MINOR)
+    POLY_VERSION := "POLYCULE-v"$(POLY_VERSION_MAJOR).$(POLY_VERSION_MINOR)
 else
-    POLY_VERSION := "POLY--$(POLY_BUILD)-$(POLY_BUILDTYPE)"-$(shell date +%Y%m%d-%H%M)
+    POLY_VERSION := "Polycule-$(POLY_BUILD)-$(POLY_BUILDTYPE)"-$(shell date +%Y%m%d-%H%M)
 endif
 
 PRODUCT_PROPERTY_OVERRIDES += \

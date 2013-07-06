@@ -95,19 +95,19 @@ _no_completion() {
 }
 
 _command_completion() {
-    local polyds
+    local cmds
 
     if _is_repo_dir
     then
-        polyds=("abandon" "branch" "branches" "checkout" "cherry-pick" "diff"
+        cmds=("abandon" "branch" "branches" "checkout" "cherry-pick" "diff"
             "download" "forall" "grep" "help" "init" "list" "prune" "rebase"
             "selfupdate" "smartsync" "stage" "start" "status" "sync"
             "upload" "version")
     else
-        polyds=("help" "init")
+        cmds=("help" "init")
     fi
 
-    _gen_comps "${polyds[*]}"
+    _gen_comps "${cmds[*]}"
 }
 
 _branch_completion() {
@@ -160,7 +160,7 @@ _manifest_completion() {
     fi
 }
 
-_path_polyd_completion() {
+_path_cmd_completion() {
     _gen_comps "$(compgen -c ${cur})"
 }
 
@@ -295,7 +295,7 @@ _when_even() {
     fi
 }
 
-_polyp_opts() {
+_cmp_opts() {
     local opt="$1"
     local word="$2"
 
@@ -319,7 +319,7 @@ _before() {
     do
         for needle in "$@"
         do
-            if _polyp_opts "${needle}" "${word}"
+            if _cmp_opts "${needle}" "${word}"
             then
                 return 1
             fi
@@ -442,8 +442,8 @@ _repo_forall() {
     )
 
     ARG_OPTIONS=(
-        ["-c"]=_path_polyd_completion
-        ["--command"]=_path_polyd_completion
+        ["-c"]=_path_cmd_completion
+        ["--command"]=_path_cmd_completion
     )
 
     _handle_options || _before _project_completion -c --command || _filedir
@@ -640,8 +640,8 @@ _repo() {
     then
         _command_completion
     else
-        local polyd=${COMP_WORDS[1]}
-        local handler=${CMD_HANDLERS["${polyd}"]}
+        local cmd=${COMP_WORDS[1]}
+        local handler=${CMD_HANDLERS["${cmd}"]}
         if [ -n ${handler} ]
         then
             eval ${handler}
